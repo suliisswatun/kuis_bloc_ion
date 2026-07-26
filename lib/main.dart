@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import'package:hive_flutter/hive_flutter.dart';
+import'package:flutter_bloc/flutter_bloc.dart';
+
+import'bloc/memory/memory_bloc.dart';
 import'models/memory.dart';
+import'pages/home_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -9,21 +13,7 @@ void main() async {
 
   Hive.registerAdapter(MemoryAdapter());
   await Hive.openBox<Memory>('memories');
-  final memoryBox = Hive.box<Memory>('memories');
-
-await memoryBox.add(
-  Memory(
-    title: 'Belajarrr Hive',
-    description: 'testing penyimpanan',
-    imagePath: '',
-    createdAt: DateTime.now(),
-  )
-);
-print(memoryBox.length);
-final firstMemory = memoryBox.getAt(0);
-print(firstMemory?.title);
-print(firstMemory?.description);
-
+  
   runApp(const MyApp());
 }
 
@@ -32,20 +22,14 @@ const MyApp({super.key});
 
   @override
   Widget build(BuildContext context){
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'My Memories',
-      home: const Scaffold(
-        body: Center(
-          child: Text(
-            'My Memories',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+    return BlocProvider(
+      create: (context) => MemoryBloc(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'My Memories',
+       home: const HomePage(),
+          
         ),
-      ),
     );
   }
 }
