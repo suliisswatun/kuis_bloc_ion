@@ -5,6 +5,7 @@ import'package:flutter_bloc/flutter_bloc.dart';
 import'bloc/memory/memory_bloc.dart';
 import'models/memory.dart';
 import'pages/home_page.dart';
+import 'bloc/memory/memory_event.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,7 +24,7 @@ const MyApp({super.key});
   @override
   Widget build(BuildContext context){
     return BlocProvider(
-      create: (context) => MemoryBloc(),
+      create: (context) => MemoryBloc()..add(LoadMemories()),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'My Memories',
