@@ -87,22 +87,128 @@ print(memory.imagePath);
     );
   },
 
-  child: ListTile(
-    leading: ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: Image.file(
-        File(memory.imagePath),
-        width: 60,
-        height: 60,
-        fit: BoxFit.cover,
-      ),
-    ),
-    title: Text(memory.title),
-    subtitle: Text(memory.description),
+  child: Card(
+  margin: const EdgeInsets.symmetric(
+    horizontal: 12,
+    vertical: 6,
   ),
-);
+  elevation: 2,
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(18),
+  ),
+  child: Padding(
+    padding: const EdgeInsets.all(12),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+
+        GestureDetector(
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (_) => Dialog(
+                child: InteractiveViewer(
+                  child: Image.file(
+                    File(memory.imagePath),
+                  ),
+                ),
+              ),
+            );
+          },
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.file(
+              File(memory.imagePath),
+              width: 70,
+              height: 70,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+
+        const SizedBox(width: 12),
+
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+
+              Text(
+                memory.title,
+                style: const TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(height: 6),
+
+              Text(
+  memory.description,
+  maxLines: 2,
+  overflow: TextOverflow.ellipsis,
+  style: TextStyle(
+    color: Colors.grey.shade700,
+  ),
+),
+
+Align(
+  alignment: Alignment.centerLeft,
+  child: TextButton(
+    style: TextButton.styleFrom(
+      padding: EdgeInsets.zero,
+      minimumSize: Size.zero,
+      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    ),
+    onPressed: () {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: Text(memory.title),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.file(File(memory.imagePath)),
+                const SizedBox(height: 12),
+                Text(memory.description),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Tutup"),
+            ),
+          ],
+        ),
+      );
+    },
+    child: const Text("Baca Selengkapnya"),
+  ),
+),
+
+Text(
+  "${memory.createdAt.day}/${memory.createdAt.month}/${memory.createdAt.year}",
+  style: const TextStyle(
+    fontSize: 12,
+    color: Colors.grey,
+  ),
+),
+            ],
+          ),
+        ),
+
+      ],
+    ),
+  ),
+),
+          );
             
         },
+
+    
+
       );
     }
 
