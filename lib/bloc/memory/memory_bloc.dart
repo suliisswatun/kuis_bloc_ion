@@ -9,38 +9,51 @@ class MemoryBloc extends Bloc<MemoryEvent, MemoryState> {
   final Box<Memory> memoryBox = Hive.box<Memory>('memories');
 
   MemoryBloc() : super(MemoryInitial()) {
-
+    /// Load semua memory
     on<LoadMemories>((event, emit) {
-      final memories = memoryBox.values.toList();
-
       emit(
-        MemoryLoaded(memories),
+        MemoryLoaded(
+          memoryBox.values.toList(),
+        ),
       );
     });
 
+    /// Tambah memory
     on<AddMemory>((event, emit) async {
-      print("bloc menerima addmemory");
+      print("Bloc menerima AddMemory");
 
       await memoryBox.add(event.memory);
 
-print("===== DATA HIVE =====");
+      print("===== DATA HIVE =====");
 
-for (int i = 0; i < memoryBox.length; i++) {
-  final memory = memoryBox.getAt(i);
+      for (int i = 0; i < memoryBox.length; i++) {
+        final memory = memoryBox.getAt(i);
 
-  print("Memory ${i + 1}");
-  print("Title      : ${memory?.title}");
-  print("Description: ${memory?.description}");
-  print("Image Path : ${memory?.imagePath}");
-  print("Created At : ${memory?.createdAt}");
-  print("----------------------------");
-}
-      print("data berhasil disimpan");
-
-      final memories = memoryBox.values.toList();
+        print("Memory ${i + 1}");
+        print("Title      : ${memory?.title}");
+        print("Description: ${memory?.description}");
+        print("Image Path : ${memory?.imagePath}");
+        print("Created At : ${memory?.createdAt}");
+        print("----------------------------");
+      }
 
       emit(
-        MemoryLoaded(memories),
+        MemoryLoaded(
+          memoryBox.values.toList(),
+        ),
+      );
+    });
+
+    /// Hapus memory
+    on<DeleteMemory>((event, emit) async {
+      print("Delete diterima Bloc: ${event.index}");
+
+      await memoryBox.deleteAt(event.index);
+
+      emit(
+        MemoryLoaded(
+          memoryBox.values.toList(),
+        ),
       );
     });
   }

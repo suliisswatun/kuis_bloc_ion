@@ -20,4 +20,14 @@ class AddMemory extends MemoryEvent {
 
   @override
   List<Object?> get props => [memory];
+
+  
+}
+class DeleteMemory extends MemoryEvent {
+  final int index;
+
+  const DeleteMemory(this.index);
+
+  @override
+  List<Object?> get props => [index];
 }

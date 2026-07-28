@@ -5,8 +5,7 @@ class AppColors {
 
   static const Color primary = Color(0xFFF7BFD8);
 
-  static const Color secondary = Color(0xFFEEDDF8);
-
+  static const Color secondary = Color(0xFF8FD3FF);
   static const Color card = Colors.white;
 
   static const Color border = Color(0xFFE8E8E8);

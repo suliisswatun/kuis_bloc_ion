@@ -6,6 +6,7 @@ import '../theme/app_colors.dart';
 import 'add_memory_page.dart';
 import '../bloc/memory/memory_bloc.dart';
 import '../bloc/memory/memory_state.dart';
+import '../bloc/memory/memory_event.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -43,19 +44,64 @@ class HomePage extends StatelessWidget {
         itemBuilder: (context, index) {
           final memory = state.memories[index];
 print(memory.imagePath);
-          return ListTile(
-  leading: ClipRRect(
-    borderRadius: BorderRadius.circular(8),
-    child: Image.file(
-      File(memory.imagePath),
-      width: 60,
-      height: 60,
-      fit: BoxFit.cover,
+          return GestureDetector(
+  onTap: () {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+
+              ListTile(
+                leading: const Icon(
+                  Icons.delete,
+                  color: Colors.red,
+                ),
+
+
+                title: const Text("Hapus Memory"),
+               onTap: () {
+              print("Klik delete index: $index");
+
+                  context.read<MemoryBloc>().add(
+                    DeleteMemory(index),
+                  );
+
+                  Navigator.pop(context);
+                },
+              ),
+
+              ListTile(
+                leading: const Icon(Icons.close),
+                title: const Text("Batal"),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+
+            ],
+          ),
+        );
+      },
+    );
+  },
+
+  child: ListTile(
+    leading: ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: Image.file(
+        File(memory.imagePath),
+        width: 60,
+        height: 60,
+        fit: BoxFit.cover,
+      ),
     ),
+    title: Text(memory.title),
+    subtitle: Text(memory.description),
   ),
-  title: Text(memory.title),
-  subtitle: Text(memory.description),
 );
+            
         },
       );
     }

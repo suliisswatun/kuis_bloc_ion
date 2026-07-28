@@ -24,8 +24,7 @@ class _AddMemoryPageState extends State<AddMemoryPage> {
 
   File? selectedImage;
   final ImagePicker picker = ImagePicker();
-
-  @override
+  
     Future<void> pickImage() async {
 
   final XFile? image = await picker.pickImage(
@@ -85,21 +84,26 @@ class _AddMemoryPageState extends State<AddMemoryPage> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: AppColors.border,
-                    ),
+                    color: AppColors.secondary.withOpacity(0.4),
+                    width: 1.5,
+                  ),
                   ),
                   child: selectedImage == null
                       ? const Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              Icons.add_a_photo_outlined,
-                              size: 55,
-                            ),
+                           Icon(
+                        Icons.add_a_photo_outlined,
+                        size: 55,
+                        color: AppColors.primary,
+                        ),
                             SizedBox(height: 12),
                             Text(
-                              "Tap untuk memilih foto",
-                            ),
+                          "Tap untuk memilih foto",
+                          style: TextStyle(
+                            color: AppColors.subtitle,
+                          ),
+                        )
                           ],
                         )
                       : ClipRRect(
@@ -128,14 +132,34 @@ class _AddMemoryPageState extends State<AddMemoryPage> {
               TextField(
                 controller: titleController,
                 decoration: InputDecoration(
-                  hintText: "Contoh: Liburan ke Bandung",
+                  hintText: "liburann",
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(16),
+                 borderSide: BorderSide(
+                 color: AppColors.border,
+               ),
+             ),
+
+                  enabledBorder: OutlineInputBorder(
+                 borderRadius: BorderRadius.circular(16),
+                 borderSide: BorderSide(
+                 color: AppColors.border,
+                 ),
+                  ),
+
+                focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(
+                color: AppColors.secondary,
+                width: 2,
+                ),
+               ),
+                  
                   ),
                 ),
-              ),
+              
 
               const SizedBox(height: 20),
 
@@ -154,15 +178,30 @@ class _AddMemoryPageState extends State<AddMemoryPage> {
                 controller: descriptionController,
                 maxLines: 5,
                 decoration: InputDecoration(
-                  hintText: "Tuliskan ceritamu...",
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
+                hintText: "Tuliskan ceritamu...",
+                hintStyle: TextStyle(
+                  color: AppColors.subtitle,
+                ),
+                filled: true,
+                fillColor: Colors.white,
+
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(
+                    color: AppColors.border,
+                    width: 1.5,
+                  ),
+                ),
+
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(
+                    color: AppColors.secondary,
+                    width: 2,
                   ),
                 ),
               ),
-
+              ),
               const SizedBox(height: 30),
 
 
@@ -221,14 +260,14 @@ class _AddMemoryPageState extends State<AddMemoryPage> {
   Navigator.pop(context);
 },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
+                    backgroundColor: AppColors.secondary,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
                   child: const Text(
-                    "🌸 Simpan Memory",
+                    "Simpan Memory",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
