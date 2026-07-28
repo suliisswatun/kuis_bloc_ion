@@ -22,6 +22,19 @@ class MemoryBloc extends Bloc<MemoryEvent, MemoryState> {
       print("bloc menerima addmemory");
 
       await memoryBox.add(event.memory);
+
+print("===== DATA HIVE =====");
+
+for (int i = 0; i < memoryBox.length; i++) {
+  final memory = memoryBox.getAt(i);
+
+  print("Memory ${i + 1}");
+  print("Title      : ${memory?.title}");
+  print("Description: ${memory?.description}");
+  print("Image Path : ${memory?.imagePath}");
+  print("Created At : ${memory?.createdAt}");
+  print("----------------------------");
+}
       print("data berhasil disimpan");
 
       final memories = memoryBox.values.toList();
