@@ -53,13 +53,58 @@ print(memory.imagePath);
           child: Wrap(
             children: [
 
-              ListTile(
+  ListTile(
+    leading: const Icon(Icons.edit),
+    title: const Text("Edit Deskripsi"),
+    onTap: () {
+      Navigator.pop(context);
+
+      final controller = TextEditingController(
+        text: memory.description,
+      );
+
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text("Edit Deskripsi"),
+          content: TextField(
+            controller: controller,
+            maxLines: 5,
+          ),
+          actions: [
+
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("Batal"),
+            ),
+
+            ElevatedButton(
+              onPressed: () {
+
+                context.read<MemoryBloc>().add(
+                  UpdateDescription(
+                    index,
+                    controller.text.trim(),
+                  ),
+                );
+
+                Navigator.pop(context);
+              },
+              child: const Text("Simpan"),
+            ),
+
+          ],
+        ),
+      );
+    },
+  ),
+          ListTile(
                 leading: const Icon(
                   Icons.delete,
                   color: Colors.red,
                 ),
-
-
                 title: const Text("Hapus Memory"),
                onTap: () {
               print("Klik delete index: $index");
@@ -233,3 +278,6 @@ Text(
   );
 } 
   }
+              
+
+

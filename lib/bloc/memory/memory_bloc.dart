@@ -56,5 +56,20 @@ class MemoryBloc extends Bloc<MemoryEvent, MemoryState> {
         ),
       );
     });
+on<UpdateDescription>((event, emit) async {
+  final memory = memoryBox.getAt(event.index);
+
+  if (memory != null) {
+    memory.description = event.description;
+
+    await memory.save();
+  }
+
+  emit(
+    MemoryLoaded(
+      memoryBox.values.toList(),
+    ),
+  );
+});
   }
 }

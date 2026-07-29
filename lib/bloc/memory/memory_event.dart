@@ -31,3 +31,16 @@ class DeleteMemory extends MemoryEvent {
   @override
   List<Object?> get props => [index];
 }
+
+class UpdateDescription extends MemoryEvent {
+  final int index;
+  final String description;
+
+  const UpdateDescription(this.index, this.description);
+
+  @override
+  List<Object?> get props => [
+        index,
+        description,
+      ];
+}
