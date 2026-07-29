@@ -57,12 +57,22 @@ class MemoryBloc extends Bloc<MemoryEvent, MemoryState> {
       );
     });
 on<UpdateDescription>((event, emit) async {
+  print("update masuk");
   final memory = memoryBox.getAt(event.index);
 
   if (memory != null) {
     memory.description = event.description;
 
-    await memory.save();
+    await memoryBox.putAt(
+  event.index,
+  Memory(
+    title: memory.title,
+    description: event.description,
+    imagePath: memory.imagePath,
+    createdAt: memory.createdAt,
+  ),
+);
+    print(memory.description);
   }
 
   emit(

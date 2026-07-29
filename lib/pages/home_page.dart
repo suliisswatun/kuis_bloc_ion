@@ -38,50 +38,52 @@ class HomePage extends StatelessWidget {
           child: Text("Belum ada memory"),
         );
       }
-
+      print("UI REBUILD");
+      print(state.memories[0].description);
       return ListView.builder(
         itemCount: state.memories.length,
         itemBuilder: (context, index) {
-          final memory = state.memories[index];
-print(memory.imagePath);
+
+      final memory = state.memories[index];
+      print(memory.imagePath);
           return GestureDetector(
-  onTap: () {
-    showModalBottomSheet(
-      context: context,
-      builder: (_) {
-        return SafeArea(
-          child: Wrap(
-            children: [
+        onTap: () {
+          showModalBottomSheet(
+            context: context,
+            builder: (_) {
+              return SafeArea(
+                child: Wrap(
+                  children: [
 
-  ListTile(
-    leading: const Icon(Icons.edit),
-    title: const Text("Edit Deskripsi"),
-    onTap: () {
-      Navigator.pop(context);
+          ListTile(
+            leading: const Icon(Icons.edit),
+            title: const Text("Edit Deskripsi"),
+            onTap: () {
+              Navigator.pop(context);
 
-      final controller = TextEditingController(
-        text: memory.description,
-      );
+              final controller = TextEditingController(
+                text: memory.description,
+              );
 
-      showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          title: const Text("Edit Deskripsi"),
-          content: TextField(
-            controller: controller,
-            maxLines: 5,
-          ),
-          actions: [
+              showDialog(
+                context: context,
+                builder: (_) => AlertDialog(
+                  title: const Text("Edit Deskripsi"),
+                  content: TextField(
+                    controller: controller,
+                    maxLines: 5,
+                  ),
+                  actions: [
 
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text("Batal"),
-            ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text("Batal"),
+                    ),
 
-            ElevatedButton(
-              onPressed: () {
+                    ElevatedButton(
+                      onPressed: () {
 
                 context.read<MemoryBloc>().add(
                   UpdateDescription(
