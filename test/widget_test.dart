@@ -1,30 +1,60 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+import 'dart:io';
 
+import 'package:apk_my_memories/bloc/memory/memory_bloc.dart';
+import 'package:apk_my_memories/bloc/memory/memory_event.dart';
+import 'package:apk_my_memories/models/memory.dart';
+import 'package:apk_my_memories/pages/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:apk_my_memories/main.dart';
+import 'package:hive/hive.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  late Directory tempDir;
+  late Box<Memory> box;
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+  setUpAll(() async {
+    tempDir = await Directory.systemTemp.createTemp('widget_test_dir');
+    Hive.init(tempDir.path);
+    if (!Hive.isAdapterRegistered(0)) {
+      Hive.registerAdapter(MemoryAdapter());
+    }
+  });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+  setUp(() async {
+    box = await Hive.openBox<Memory>('widget_test_box_${DateTime.now().microsecondsSinceEpoch}');
+  });
+
+  tearDown(() async {
+    await box.clear();
+    await box.close();
+  });
+
+  tearDownAll(() async {
+    await Hive.close();
+    if (tempDir.existsSync()) {
+      await tempDir.delete(recursive: true);
+    }
+  });
+
+  testWidgets('HomePage displays title and empty state text', (WidgetTester tester) async {
+    final memoryBloc = MemoryBloc(box: box)..add(LoadMemories());
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: BlocProvider.value(
+          value: memoryBloc,
+          child: const HomePage(),
+        ),
+      ),
+    );
+
+    await tester.pump();
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.text('🌸 My Memories'), findsOneWidget);
+    expect(find.text('Belum ada memory'), findsOneWidget);
+
+    await memoryBloc.close();
   });
 }

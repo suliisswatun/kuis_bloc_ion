@@ -20,27 +20,25 @@ class AddMemory extends MemoryEvent {
 
   @override
   List<Object?> get props => [memory];
-
-  
 }
-class DeleteMemory extends MemoryEvent {
-  final int index;
 
-  const DeleteMemory(this.index);
+/// Menghapus memory berdasarkan key Hive
+class DeleteMemory extends MemoryEvent {
+  final dynamic key;
+
+  const DeleteMemory(this.key);
 
   @override
-  List<Object?> get props => [index];
+  List<Object?> get props => [key];
 }
 
+/// Mengupdate deskripsi memory berdasarkan key Hive
 class UpdateDescription extends MemoryEvent {
-  final int index;
+  final dynamic key;
   final String description;
 
-  const UpdateDescription(this.index, this.description);
+  const UpdateDescription(this.key, this.description);
 
   @override
-  List<Object?> get props => [
-        index,
-        description,
-      ];
+  List<Object?> get props => [key, description];
 }

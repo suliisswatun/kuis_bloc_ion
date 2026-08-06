@@ -21,3 +21,13 @@ class MemoryLoaded extends MemoryState {
   @override
   List<Object?> get props => [memories];
 }
+
+/// State ketika terjadi error pada operasi Hive
+class MemoryError extends MemoryState {
+  final String message;
+
+  const MemoryError(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}

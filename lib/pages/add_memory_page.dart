@@ -8,7 +8,6 @@ import 'package:path_provider/path_provider.dart';
 import '../theme/app_colors.dart';
 import '../bloc/memory/memory_bloc.dart';
 import '../bloc/memory/memory_event.dart';
-import '../bloc/memory/memory_state.dart';
 import '../models/memory.dart';
 
 class AddMemoryPage extends StatefulWidget {
@@ -25,26 +24,27 @@ class _AddMemoryPageState extends State<AddMemoryPage> {
   File? selectedImage;
   final ImagePicker picker = ImagePicker();
   
-    Future<void> pickImage() async {
+  Future<void> pickImage() async {
+    final XFile? image = await picker.pickImage(
+      source: ImageSource.gallery,
+    );
 
-  final XFile? image = await picker.pickImage(
-    source: ImageSource.gallery,
-  );
+    if (image == null) return;
 
-  if (image == null) return;
+    final appDir = await getApplicationDocumentsDirectory();
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final fileName = '${timestamp}_${path.basename(image.path)}';
 
-  final appDir = await getApplicationDocumentsDirectory();
+    final savedImage = await File(image.path).copy(
+      '${appDir.path}/$fileName',
+    );
 
-  final fileName = path.basename(image.path);
+    setState(() {
+      selectedImage = savedImage;
+    });
+  }
 
-  final savedImage = await File(image.path).copy(
-    '${appDir.path}/$fileName',
-  );
-
-  setState(() {
-    selectedImage = savedImage;
-  });
-}
+  @override
   void dispose() {
     titleController.dispose();
     descriptionController.dispose();
@@ -84,9 +84,9 @@ class _AddMemoryPageState extends State<AddMemoryPage> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                    color: AppColors.secondary.withOpacity(0.4),
-                    width: 1.5,
-                  ),
+                      color: AppColors.secondary.withValues(alpha: 0.4),
+                      width: 1.5,
+                    ),
                   ),
                   child: selectedImage == null
                       ? const Column(
@@ -111,6 +111,15 @@ class _AddMemoryPageState extends State<AddMemoryPage> {
                           child: Image.file(
                             selectedImage!,
                             fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Center(
+                                child: Icon(
+                                  Icons.broken_image_outlined,
+                                  size: 55,
+                                  color: AppColors.subtitle,
+                                ),
+                              );
+                            },
                           ),
                         ),
                 ),

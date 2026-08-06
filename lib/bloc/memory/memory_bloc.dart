@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -6,80 +8,77 @@ import 'memory_event.dart';
 import 'memory_state.dart';
 
 class MemoryBloc extends Bloc<MemoryEvent, MemoryState> {
-  final Box<Memory> memoryBox = Hive.box<Memory>('memories');
+  final Box<Memory>? _box;
 
-  MemoryBloc() : super(MemoryInitial()) {
+  Box<Memory> get memoryBox =>
+      _box ?? Hive.box<Memory>('memories');
+
+  MemoryBloc({Box<Memory>? box})
+      : _box = box,
+        super(MemoryInitial()) {
     /// Load semua memory
     on<LoadMemories>((event, emit) {
-      emit(
-        MemoryLoaded(
-          memoryBox.values.toList(),
-        ),
-      );
+      try {
+        final memories = memoryBox.values.toList();
+        emit(MemoryLoaded(memories));
+      } on HiveError catch (e) {
+        emit(MemoryError('Gagal memuat memory: ${e.message}'));
+      }
     });
 
     /// Tambah memory
     on<AddMemory>((event, emit) async {
-      print("Bloc menerima AddMemory");
-
-      await memoryBox.add(event.memory);
-
-      print("===== DATA HIVE =====");
-
-      for (int i = 0; i < memoryBox.length; i++) {
-        final memory = memoryBox.getAt(i);
-
-        print("Memory ${i + 1}");
-        print("Title      : ${memory?.title}");
-        print("Description: ${memory?.description}");
-        print("Image Path : ${memory?.imagePath}");
-        print("Created At : ${memory?.createdAt}");
-        print("----------------------------");
+      try {
+        await memoryBox.add(event.memory);
+        emit(MemoryLoaded(memoryBox.values.toList()));
+      } on HiveError catch (e) {
+        emit(MemoryError('Gagal menyimpan memory: ${e.message}'));
       }
-
-      emit(
-        MemoryLoaded(
-          memoryBox.values.toList(),
-        ),
-      );
     });
 
-    /// Hapus memory
+    /// Hapus memory berdasarkan key
     on<DeleteMemory>((event, emit) async {
-      print("Delete diterima Bloc: ${event.index}");
+      try {
+        final memory = memoryBox.get(event.key);
+        await memoryBox.delete(event.key);
 
-      await memoryBox.deleteAt(event.index);
+        // Hapus file gambar orphan (MEDIUM-003)
+        if (memory != null) {
+          try {
+            final file = File(memory.imagePath);
+            if (await file.exists()) {
+              await file.delete();
+            }
+          } catch (_) {
+            // Kegagalan hapus file tidak boleh menggagalkan penghapusan record
+          }
+        }
 
-      emit(
-        MemoryLoaded(
-          memoryBox.values.toList(),
-        ),
-      );
+        emit(MemoryLoaded(memoryBox.values.toList()));
+      } on HiveError catch (e) {
+        emit(MemoryError('Gagal menghapus memory: ${e.message}'));
+      }
     });
-on<UpdateDescription>((event, emit) async {
-  print("update masuk");
-  final memory = memoryBox.getAt(event.index);
 
-  if (memory != null) {
-    memory.description = event.description;
-
-    await memoryBox.putAt(
-  event.index,
-  Memory(
-    title: memory.title,
-    description: event.description,
-    imagePath: memory.imagePath,
-    createdAt: memory.createdAt,
-  ),
-);
-    print(memory.description);
-  }
-
-  emit(
-    MemoryLoaded(
-      memoryBox.values.toList(),
-    ),
-  );
-});
+    /// Update deskripsi memory berdasarkan key
+    on<UpdateDescription>((event, emit) async {
+      try {
+        final memory = memoryBox.get(event.key);
+        if (memory != null) {
+          await memoryBox.put(
+            event.key,
+            Memory(
+              title: memory.title,
+              description: event.description,
+              imagePath: memory.imagePath,
+              createdAt: memory.createdAt,
+            ),
+          );
+        }
+        emit(MemoryLoaded(memoryBox.values.toList()));
+      } on HiveError catch (e) {
+        emit(MemoryError('Gagal mengupdate deskripsi: ${e.message}'));
+      }
+    });
   }
 }
